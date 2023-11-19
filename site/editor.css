@@ -1,0 +1,30 @@
+@import url("fontello/css/fontello.css");
+
+body{
+    margin: 0;
+    padding: 0;
+    background-color: #222;
+    color: white;
+    user-select: none;}
+nav{
+    height: 50px;
+    line-height: 50px;
+    padding: 0 20px;
+    background-color: #111;}
+main{
+    height: calc(100vh - 50px);
+    display: flex;}
+    main > div{
+        height: 100%;}
+    #left{
+        width: 50px;
+        display: flex;
+        flex-direction: column;
+        }
+        #left > div{
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 25px;}

@@ -1,13 +1,15 @@
 {
+  "name": "electropack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
     "electron": "^27.1.0"
-  },
-  "scripts": {
-    "start": "electron ."
-  },
-  "name": "electropack",
-  "version": "0.1.1",
-  "main": "main.js",
-  "author": "Michał Swoboda",
-  "license": "Beerware"
+  }
 }
