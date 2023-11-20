@@ -1,22 +1,13 @@
 Font license info
 
 
-## Typicons
+## Entypo
 
-   (c) Stephen Hutchings 2012
+   Copyright (C) 2012 by Daniel Bruce
 
-   Author:    Stephen Hutchings
+   Author:    Daniel Bruce
    License:   SIL (http://scripts.sil.org/OFL)
-   Homepage:  http://typicons.com/
-
-
-## Web Symbols
-
-   Copyright (c) 2011 by Just Be Nice studio. All rights reserved.
-
-   Author:    Just Be Nice studio
-   License:   SIL (http://scripts.sil.org/OFL)
-   Homepage:  http://www.justbenicestudio.com/
+   Homepage:  http://www.entypo.com
 
 
 ## Font Awesome
@@ -26,23 +17,5 @@ Font license info
    Author:    Dave Gandy
    License:   SIL ()
    Homepage:  http://fortawesome.github.com/Font-Awesome/
-
-
-## Linecons
-
-   Copyright (C) 2013 by Designmodo
-
-   Author:    Designmodo for Smashing Magazine
-   License:   CC BY ()
-   Homepage:  http://designmodo.com/linecons-free/
-
-
-## Elusive
-
-   Copyright (C) 2013 by Aristeides Stathopoulos
-
-   Author:    Aristeides Stathopoulos
-   License:   SIL (http://scripts.sil.org/OFL)
-   Homepage:  http://aristeides.com/
 
 
