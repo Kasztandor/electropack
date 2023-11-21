@@ -8,16 +8,17 @@
     <script src='editor.js'></script>
 </head>
 <body>
-    <nav>ABC</nav>
+    <header>ABC</header>
     <main>
-        <div id="left">
-            <div id="filesButton"><span class="icon-menu"></span></div>
-            <div id="visualEditorButton"><i class="icon-folder"></i></div>
-        </div>
+        <nav>
+            <div id="visualEditorButton" class="selectedTab"><span class="icon-menu"></span></div>
+            <div id="filesButton"><i class="icon-folder"></i></div>
+        </nav>
         <div id="leftBar">
         </div>
-        <div id="center">3</div>
-        <div id="rightBar">4</div>
+        <div id="center">
+            <div id="codeEditor" contenteditable="true" oninput="codeEditorColors(this)"></div>
+        </div>
     </main>
 </body>
 </html>
