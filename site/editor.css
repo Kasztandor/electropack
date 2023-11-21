@@ -34,16 +34,13 @@ main{
         #files{
             width: calc(100% - 10px);
             margin: 5px;}
-            #files ul{
-                list-style-type: none;
-                padding: 0;
-                margin: 0;}
-                #files li{
-                    transition: .25s;
-                    max-height: 100vh;
-                    line-height: 20px;
-                    overflow: hidden;}
-                    #files li > ul{
-                        margin: 0 0 0 25px;}
-                .close{
-                    max-height: 20px !important;}
+            #files div{
+                padding-left: calc(var(--depth) * 10);}
+            #files i{
+                margin-right: 3px;
+                display: inline-block;
+                border-radius: 50%;}
+            .clickableI:hover{
+                cursor: pointer;
+                color: #aaa;
+                background-color: #111;}
