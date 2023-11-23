@@ -34,17 +34,14 @@ function switchOpen(x){
     let nextSibling = parentElement.nextElementSibling
     if (nextSibling.style.display == "none"){
         nextSibling.style.display = "block"
-        x.classList.remove("icon-right-open")
-        x.classList.add("icon-down-open")
+        x.classList.remove("icon-angle-right")
+        x.classList.add("icon-angle-down")
     }
     else{
         nextSibling.style.display = "none"
-        x.classList.remove("icon-down-open")
-        x.classList.add("icon-right-open")
+        x.classList.remove("icon-angle-down")
+        x.classList.add("icon-angle-right")
     }
-}
-function openFile(path){
-    console.log(path)
 }
 function fileStructureGenerator(files, depth=1, path="/"){
     let returnString = ""
@@ -53,15 +50,15 @@ function fileStructureGenerator(files, depth=1, path="/"){
             if (element.startsWith("dir:")){
                 let temp = ""
                 if ((index === array.length - 1) || (typeof(array[index+1]) == "string")){
-                    temp = '<i class="icon-down-open"></i>'
+                    temp = '<i class="icon-angle-down"></i>'
                 }
                 else{
-                    temp = '<i class="icon-down-open clickableI" onclick="switchOpen(this)"></i>'
+                    temp = '<i class="icon-angle-down clickableI" onclick="switchOpen(this)"></i>'
                 }
                 returnString += '<div class="directory">'+temp+'<span>'+element.substring(4)+'</span></div>'
             }
             else{
-                returnString += '<div class="file" onclick=\'openFile("'+path+element.substring(5)+'")\'><i class="icon-doc""></i><span>'+element.substring(5)+'</span></div>'
+                returnString += '<div class="file" onclick=\'openTab("'+path+element.substring(5)+'", "file")\'><i class="icon-doc"></i><span>'+element.substring(5)+'</span></div>'
             }
         }
         else{
@@ -70,10 +67,41 @@ function fileStructureGenerator(files, depth=1, path="/"){
     })
     return returnString
 }
-function loadFiles(){
+function switchTab(id){
+    document.querySelectorAll(".openedTabContent").forEach(function(element){
+        element.style.display = "none"
+    })
+    document.querySelectorAll(".tab").forEach(function(element){
+        element.classList.remove("selectedTab")
+    })
+    document.getElementById("content:"+id).style.display = "block"
+    document.getElementById("tab:"+id).classList.add("selectedTab")
+}
+function closeTab(id){
+    document.getElementById("tab:"+id).remove()
+    document.getElementById("content:"+id).remove()
+    if (document.querySelector(".tab") == null){
+        document.querySelector("#center").innerHTML = '<img src="logo.png"/>'
+    }
+}
+function openTab(x, type){
+    let id = type+":"+x
+    if (document.querySelector("#tabs") == null){
+        document.querySelector("#center").innerHTML = '<div id="tabs"></div><div id="openedTab"></div>'
+    }
+    if (document.getElementById("tab:"+id) == null){
+        if (type == "file"){
+            document.querySelector("#tabs").innerHTML += '<div id="tab:'+id+'" class="tab" onclick="switchTab(\''+id+'\')"><i class="icon-doc"></i> '+x.split("/")[x.split("/").length-1]+' <i class="icon-cancel"></i></div>'
+            document.querySelector("#openedTab").innerHTML += '<div class="openedTabContent" id="content:'+id+'"><div id="codeEditor" contenteditable="true" oninput="codeEditorColors(this)"></div></div>'
+        }
+        //document.querySelector("#openedTab").innerHTML = '<div id="openedTabContent"></div>'
+    }
+    switchTab(id)
+}
+function filesTab(){
     let files = ["dir:Datapack", ["dir:data", ["dir:namespace", ["dir:advancements", "dir:functions", "dir:loot_tables", "dir:predicates"], "dir:minecraft", ["dir:tags", ["dir:functions", ["file:load.json", "file:tick.json"]]]], "file:pack.mcmeta", "file:pack.png"]]
     document.querySelector("#leftBar").innerHTML = '<div id="files"></div>'
     document.querySelector("#files").innerHTML = fileStructureGenerator(files)
 }
 
-window.onload = loadFiles
+window.onload = filesTab

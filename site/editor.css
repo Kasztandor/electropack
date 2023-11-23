@@ -30,10 +30,10 @@ main{
         nav > div:hover{
             cursor: pointer;
             background-color: #444;}
-        .selectedTab{
+        .selectedMainTab{
             background-color: #333;
             position: relative;}
-        .selectedTab::before{
+        .selectedMainTab::before{
             content: "";
             display: block;
             position: absolute;
@@ -65,12 +65,47 @@ main{
                 color: #aaa;
                 background-color: #111;}
     #center{
+        position: relative;
         height: calc(100vh - 50px);
         width: calc(100vw - 250px);}
-        #codeEditor{
-            width: 100%;
-            height: 100%;}
-        [contenteditable] {
-            outline: 0px solid transparent;}
-        .kw1{
-            color: blue;}
+        #center > img{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            max-width: 100%;
+            max-height: 100%;}
+        #tabs{
+            height: 34px;
+            line-height: 34px;
+            border-bottom: 1px solid #333;
+            overflow-x: auto;
+            white-space: nowrap;}
+            .tab{
+                display: inline-block;
+                vertical-align: top;
+                padding: 0 5px;
+                background-color: #333;}
+            .tab:hover{
+                cursor: pointer;
+                background-color: #444;}
+            .selectedTab{
+                background-color: #555;}
+                .tab .icon-cancel{
+                    display: inline-block;
+                    transform: scale(0.7);}
+        #openedTab{
+            height: calc(100% - 35px);
+            overflow: auto;}
+            .openedTabContent{
+                width: 100%;
+                height: 100%;}
+                #codeEditor{
+                    width: 100%;
+                    height: 100%;}
+                [contenteditable] {
+                    outline: 0px solid transparent;}
+                .kw1{
+                    color: blue;}

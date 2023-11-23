@@ -7,57 +7,45 @@
   "ascent": 850,
   "glyphs": [
     {
-      "uid": "8704cd847a47b64265b8bb110c8b4d62",
-      "css": "down-open",
-      "code": 59392,
-      "src": "entypo"
-    },
-    {
-      "uid": "749e7d90a9182938180f1d2d8c33584e",
-      "css": "right-open",
-      "code": 59393,
-      "src": "entypo"
-    },
-    {
-      "uid": "f11c9e95ae5eaa84d193e8fa1d38c6f9",
-      "css": "down-open-mini",
-      "code": 59394,
-      "src": "entypo"
-    },
-    {
-      "uid": "37f6cfbb4062ed0d01b351ec35c334ff",
-      "css": "right-open-mini",
-      "code": 59395,
-      "src": "entypo"
-    },
-    {
-      "uid": "559647a6f430b3aeadbecd67194451dd",
+      "uid": "jh3jpcb1t1bcm80gidkadilh080aq79h",
       "css": "menu",
-      "code": 61641,
-      "src": "fontawesome"
-    },
-    {
-      "uid": "657ab647f6248a6b57a5b893beaf35a9",
-      "css": "lock-open",
-      "code": 59396,
-      "src": "fontawesome"
-    },
-    {
-      "uid": "05376be04a27d5a46e855a233d6e8508",
-      "css": "lock-open-alt",
-      "code": 61758,
-      "src": "fontawesome"
+      "code": 59393,
+      "src": "typicons"
     },
     {
       "uid": "f8aa663c489bcbd6e68ec8147dca841e",
       "css": "folder",
-      "code": 59397,
+      "code": 59398,
       "src": "fontawesome"
     },
     {
       "uid": "1b5a5d7b7e3c71437f5a26befdd045ed",
       "css": "doc",
-      "code": 59398,
+      "code": 59406,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "8da3ac534210aae9c0f0e13804c1df97",
+      "css": "cancel",
+      "code": 59395,
+      "src": "websymbols"
+    },
+    {
+      "uid": "7b16b22168e762c88333f465da862098",
+      "css": "ok",
+      "code": 59394,
+      "src": "websymbols"
+    },
+    {
+      "uid": "7bf14281af5633a597f85b061ef1cfb9",
+      "css": "angle-right",
+      "code": 61701,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "e4dde1992f787163e2e2b534b8c8067d",
+      "css": "angle-down",
+      "code": 61703,
       "src": "fontawesome"
     }
   ]
