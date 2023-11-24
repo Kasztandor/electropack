@@ -28,7 +28,12 @@ function codeEditorColors(x){
     x.innerHTML = content;
     setCursorPosition(x, pos);
 }*/
-function codeEditorColors(x){}
+function codeEditorChange(x){
+    if (!x.classList.contains("edited")){
+        x.classList.add("edited")
+        console.log(x.parentElement.id.substring(8))
+    }
+}
 function switchOpen(x){
     let parentElement = x.parentElement
     let nextSibling = parentElement.nextElementSibling
@@ -77,11 +82,22 @@ function switchTab(id){
     document.getElementById("content:"+id).style.display = "block"
     document.getElementById("tab:"+id).classList.add("selectedTab")
 }
-function closeTab(id){
-    document.getElementById("tab:"+id).remove()
-    document.getElementById("content:"+id).remove()
-    if (document.querySelector(".tab") == null){
-        document.querySelector("#center").innerHTML = '<img src="logo.png"/>'
+function closeTab(id, approved="prompt"){
+    if (approved == "prompt"){
+        document.querySelector("#promptDiv").style.display = "block"
+        document.querySelector("#prompt").innerHTML = '<div>Do you really want to close unsaved file?</div><div><button onclick=\'closeTab("'+id+'", true)\'>Yes</button><button  onclick=\'closeTab("'+id+'", false)\'>No</button></div>'
+        return
+    }
+    document.querySelector("#promptDiv").style.display = "none"
+    if (approved == true){
+        document.getElementById("tab:"+id).remove()
+        document.getElementById("content:"+id).remove()
+        if (document.querySelector(".tab") == null){
+            document.querySelector("#center").innerHTML = '<img src="logo.png"/>'
+        }
+        else{
+            switchTab(document.querySelector(".tab").id.substring(4))
+        }
     }
 }
 function openTab(x, type){
@@ -91,10 +107,11 @@ function openTab(x, type){
     }
     if (document.getElementById("tab:"+id) == null){
         if (type == "file"){
-            document.querySelector("#tabs").innerHTML += '<div id="tab:'+id+'" class="tab" onclick="switchTab(\''+id+'\')"><i class="icon-doc"></i> '+x.split("/")[x.split("/").length-1]+' <i class="icon-cancel"></i></div>'
-            document.querySelector("#openedTab").innerHTML += '<div class="openedTabContent" id="content:'+id+'"><div id="codeEditor" contenteditable="true" oninput="codeEditorColors(this)"></div></div>'
+            var tabContent = '<i class="icon-doc"></i> '+x.split("/")[x.split("/").length-1]
+            var contentContent = '<div id="codeEditor" contenteditable="true" oninput="codeEditorChange(this)"></div>'
         }
-        //document.querySelector("#openedTab").innerHTML = '<div id="openedTabContent"></div>'
+        document.querySelector("#tabs").innerHTML += '<div id="tab:'+id+'" class="tab" onclick="switchTab(\''+id+'\')">'+tabContent+' <i class="icon-cancel" onclick=\'closeTab("'+id+'")\'></i></div>'
+        document.querySelector("#openedTab").innerHTML += '<div display="none" class="openedTabContent" id="content:'+id+'">'+contentContent+'</div>'
     }
     switchTab(id)
 }
