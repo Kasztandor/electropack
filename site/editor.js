@@ -28,6 +28,25 @@ function codeEditorColors(x){
     x.innerHTML = content;
     setCursorPosition(x, pos);
 }*/
+let editorMode = ""
+function switchEditorMode(x){
+    if (x == "visualEditor" && editorMode != "visualEditor"){
+        document.querySelectorAll(".selectedMainTab").forEach(function(element){element.classList.remove("selectedMainTab")})
+        document.querySelector("#visualEditorButton").classList.add("selectedMainTab")
+        editorMode = "visualEditor"
+    }
+    else if (x == "filesEditor" && editorMode != "filesEditor"){
+        document.querySelectorAll(".selectedMainTab").forEach(function(element){element.classList.remove("selectedMainTab")})
+        document.querySelector("#filesEditorButton").classList.add("selectedMainTab")
+        editorMode = "filesEditor"
+        filesDisplay()
+    }
+}
+
+//////////////////////
+// CENTER FUNCITONS //
+//////////////////////
+
 function codeEditorChange(x){
     if (!x.classList.contains("edited")){
         x.classList.add("edited")
@@ -47,30 +66,6 @@ function switchOpen(x){
         x.classList.remove("icon-angle-down")
         x.classList.add("icon-angle-right")
     }
-}
-function fileStructureGenerator(files, depth=1, path="/"){
-    let returnString = ""
-    files.forEach(function(element, index, array){
-        if (typeof(element) == "string"){
-            if (element.startsWith("dir:")){
-                let temp = ""
-                if ((index === array.length - 1) || (typeof(array[index+1]) == "string")){
-                    temp = '<i class="icon-angle-down"></i>'
-                }
-                else{
-                    temp = '<i class="icon-angle-down clickableI" onclick="switchOpen(this)"></i>'
-                }
-                returnString += '<div class="directory">'+temp+'<span>'+element.substring(4)+'</span></div>'
-            }
-            else{
-                returnString += '<div class="file" onclick=\'openTab("'+path+element.substring(5)+'", "file")\'><i class="icon-doc"></i><span>'+element.substring(5)+'</span></div>'
-            }
-        }
-        else{
-            returnString += '<div class="directoryStorage" style="--depth: '+depth+'px;">'+fileStructureGenerator(element, depth+1, path+array[index-1].substring(4)+"/")+'</div>'
-        }
-    })
-    return returnString
 }
 function switchTab(id){
     document.querySelectorAll(".openedTabContent").forEach(function(element){
@@ -115,10 +110,47 @@ function openTab(x, type){
     }
     switchTab(id)
 }
-function filesTab(){
-    let files = ["dir:Datapack", ["dir:data", ["dir:namespace", ["dir:advancements", "dir:functions", "dir:loot_tables", "dir:predicates"], "dir:minecraft", ["dir:tags", ["dir:functions", ["file:load.json", "file:tick.json"]]]], "file:pack.mcmeta", "file:pack.png"]]
+
+////////////////////////
+// VISUAL EDITOR MODE //
+////////////////////////
+
+///////////////////////
+// FILES EDITOR MODE //
+///////////////////////
+
+function fileStructureGenerator(files, depth=1, path="/"){
+    let returnString = ""
+    files.forEach(function(element, index, array){
+        if (typeof(element) == "string"){
+            if (element.startsWith("dir:")){
+                let temp = ""
+                if ((index === array.length - 1) || (typeof(array[index+1]) == "string")){
+                    temp = '<i class="icon-angle-down"></i>'
+                }
+                else{
+                    temp = '<i class="icon-angle-down clickableI" onclick="switchOpen(this)"></i>'
+                }
+                returnString += '<div class="directory">'+temp+'<span>'+element.substring(4)+'</span></div>'
+            }
+            else{
+                returnString += '<div class="file" onclick=\'openTab("'+path+element.substring(5)+'", "file")\'><i class="icon-doc"></i><span>'+element.substring(5)+'</span></div>'
+            }
+        }
+        else{
+            returnString += '<div class="directoryStorage" style="--depth: '+depth+'px;">'+fileStructureGenerator(element, depth+1, path+array[index-1].substring(4)+"/")+'</div>'
+        }
+    })
+    return returnString
+}
+function filesDisplay(){
+    let files = ["dir:Datapack", ["dir:data", ["dir:namespace", ["dir:advancements", "dir:dimension", "dir:dimension_type", "dir:functions", "dir:loot_tables", "dir:predicates", "dir:recipes", "dir:structures", "dir:tags", "dir:chat_type", "dir:damage_type", "dir:worldgen", ["dir:biome", "dir:configured_carver", "dir:configured_feature", "dir:density_function", "dir:flat_level_generator_preset", "dir:noise", "dir:noise_settings", "dir:placed_feature", "dir:processor_list", "dir:structure", "dir:structure_set", "dir:template_pool", "dir:world_preset"]], "dir:minecraft", ["dir:tags", ["dir:functions", ["file:load.json", "file:tick.json"]]]], "file:pack.mcmeta", "file:pack.png"]]
     document.querySelector("#leftBar").innerHTML = '<div id="files"></div>'
     document.querySelector("#files").innerHTML = fileStructureGenerator(files)
 }
 
-window.onload = filesTab
+//////////
+// INIT //
+//////////
+
+window.onload = ()=>{switchEditorMode("visualEditor")}
