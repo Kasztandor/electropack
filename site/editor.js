@@ -28,6 +28,11 @@ function codeEditorColors(x){
     x.innerHTML = content;
     setCursorPosition(x, pos);
 }*/
+
+function testButton(x){
+    window.electronAPI.setTitle()
+}
+
 let editorMode = ""
 function switchEditorMode(x){
     if (x == "visualEditor" && editorMode != "visualEditor"){
