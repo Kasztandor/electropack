@@ -29,7 +29,7 @@ function codeEditorColors(x){
     setCursorPosition(x, pos);
 }*/
 
-function testButton(x){
+function testButton(){
     window.electronAPI.setTitle()
 }
 

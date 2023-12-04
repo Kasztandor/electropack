@@ -16,11 +16,11 @@ app.whenReady().then(() => {
         icon: __dirname + '/icon.png',
         webPreferences: {
             nodeIntegration: true,
-            preload: __dirname+'site/editorPreload.js'
+            preload: __dirname+'/site/editorPreload.js'
         }
     })
     win.setMenuBarVisibility(false)
     win.loadFile('site/editor.html')
-    ipcMain.on('channel', (event)=>{console.log("channel")})
+    ipcMain.on('channel', handleSetTitle)
     win.webContents.openDevTools()
 })
