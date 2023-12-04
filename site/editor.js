@@ -29,9 +29,22 @@ function codeEditorColors(x){
     setCursorPosition(x, pos);
 }*/
 
-function testButton(){
-    window.electronAPI.setTitle()
-}
+/////////////////////
+// EVENT LISTENERS //
+/////////////////////
+
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'F12') {
+        window.electropackAPI.devtools()
+    }
+})
+
+let dir = "/home/kasztandor/Pulpit/testdir"
+let electropack = window.electropackAPI.loadConfig(dir)
+
+////////////////////////
+// CHANGE EDITOR MODE //
+////////////////////////
 
 let editorMode = ""
 function switchEditorMode(x){

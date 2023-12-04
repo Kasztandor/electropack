@@ -1,12 +1,5 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 
-function handleSetTitle(event, x){
-    const webContents = event.sender
-    const win = BrowserWindow.fromWebContents(webContents)
-    win.setTitle(x)
-    console.log(x)
-}
-
 console.log(__dirname)
 
 app.whenReady().then(() => {
@@ -21,6 +14,7 @@ app.whenReady().then(() => {
     })
     win.setMenuBarVisibility(false)
     win.loadFile('site/editor.html')
-    ipcMain.on('channel', handleSetTitle)
-    win.webContents.openDevTools()
+    ipcMain.on('devtools', () => {
+        win.webContents.openDevTools()
+    })
 })
