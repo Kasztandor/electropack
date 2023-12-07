@@ -1,7 +1,5 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 
-console.log(__dirname)
-
 app.whenReady().then(() => {
     const win = new BrowserWindow({
         width: 800,
@@ -16,5 +14,8 @@ app.whenReady().then(() => {
     win.loadFile('site/editor.html')
     ipcMain.on('devtools', () => {
         win.webContents.openDevTools()
+    })
+    ipcMain.on('consoleLog', (event, arg) => {
+        console.log(arg)
     })
 })

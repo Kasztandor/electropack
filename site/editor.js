@@ -33,8 +33,7 @@ function codeEditorColors(x){
 /* PRESETS */
 /*=========*/
 
-let dir = "/home/kasztandor/Pulpit/testdir"
-let electropackConfig = window.electropackAPI.loadConfig(dir)
+let electropackConfig = window.electropackAPI.loadConfig()
 
 /*===========*/
 /* CONSTANTS */
@@ -94,7 +93,7 @@ function editConfig(key, value, mode="add"){
     else if (mode == "remove" && electropackConfig[key].indexOf(value)!=-1 && electropackConfig[key].length > 1){
         electropackConfig[key].splice(electropackConfig[key].indexOf(value), 1)
     }
-    window.electropackAPI.setConfig(dir, electropackConfig)
+    window.electropackAPI.setConfig(electropackConfig)
 }
 
 /*====================*/
@@ -128,17 +127,13 @@ function codeEditorChange(x){
     }
 }
 function switchOpen(x){
-    let parentElement = x.parentElement
-    let nextSibling = parentElement.nextElementSibling
-    if (nextSibling.style.display == "none"){
-        nextSibling.style.display = "block"
-        x.classList.remove("icon-angle-right")
-        x.classList.add("icon-angle-down")
+    if (document.getElementById("dir:"+x) == null){
+        document.getElementById(x).classList.replace("icon-angle-right", "icon-angle-down")
+        document.getElementById("dir:"+x).insertAdjacentHTML("afterbegin", fileStructureGenerator(1, x+"/"))
     }
     else{
-        nextSibling.style.display = "none"
-        x.classList.remove("icon-angle-down")
-        x.classList.add("icon-angle-right")
+        document.getElementById(x).classList.replace("icon-angle-down", "icon-angle-right")
+        document.getElementById("dir:"+x).remove()
     }
 }
 function switchTab(id){
@@ -195,9 +190,26 @@ function openTab(x, type){
 /* FILES EDITOR MODE */
 /*===================*/
 
-function fileStructureGenerator(files, depth=1, path="/"){
+function fileStructureGenerator(depth=1, path="/"){
     let returnString = ""
-    files.forEach(function(element, index, array){
+    let scannedFiles = window.electropackAPI.readDir(path)
+    console.log(scannedFiles)
+    scannedFiles["dirs"].forEach(function(element){
+        let subdir = ""
+        let icon = "icon-angle-right"
+        if (electropackConfig.oppenedDirs.includes(path+element)){
+            subdir = '<div id="'+"dir:"+path+element+'" class="directoryStorage" style="--depth: '+depth+'px;">'+fileStructureGenerator(depth+1, path+element+"/")+'</div>'
+            icon = "icon-angle-down"
+        }
+        let dir = '<div class="directory"><i id="'+path+element+'" class="'+icon+' clickableI" onclick="switchOpen("'+path+element+'")"></i><span>'+element+'</span></div>'
+        returnString += dir+subdir
+    })
+    scannedFiles["files"].forEach(function(element){
+        if (!ignoredFiles.includes(element)){
+            returnString += '<div class="file" onclick=\'openTab("'+path+element+'", "file")\'><i class="icon-doc"></i><span>'+element+'</span></div>'
+        }
+    })
+    /*files.forEach(function(element, index, array){
         if (typeof(element) == "string"){
             if (element.startsWith("dir:")){
                 let temp = ""
@@ -216,12 +228,12 @@ function fileStructureGenerator(files, depth=1, path="/"){
         else{
             returnString += '<div class="directoryStorage" style="--depth: '+depth+'px;">'+fileStructureGenerator(element, depth+1, path+array[index-1].substring(4)+"/")+'</div>'
         }
-    })
+    })*/
     return returnString
 }
 function filesDisplay(){
     document.querySelector("#leftBar").innerHTML = '<div id="files"></div>'
-    document.querySelector("#files").innerHTML = fileStructureGenerator(files)
+    document.querySelector("#files").innerHTML = fileStructureGenerator()
 }
 
 /*======*/
