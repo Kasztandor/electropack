@@ -6,14 +6,19 @@ contextBridge.exposeInMainWorld('electropackAPI', {
         ipcRenderer.send('devtools')
     },
     loadConfig: (dir) => {
-        ipcRenderer.send('loadconfig', dir)
         if (!fs.existsSync(dir+"/.electropack.json")){
-            fs.writeFileSync(dir+"/.electropack.json", JSON.stringify({}, null, 4))
+            const cfg = {
+                oppenedDirs: []
+            }
+            fs.writeFileSync(dir+"/.electropack.json", JSON.stringify(cfg, null, 4))
+            return cfg
         }
-        let config = fs.readFileSync(dir+"/.electropack.json", "utf-8")
-        return JSON.parse(config)
+        let cfg = fs.readFileSync(dir+"/.electropack.json", "utf-8")
+        return JSON.parse(cfg)
     },
-    setConfig: (dir, config) => {},
+    setConfig: (dir, cfg) => {
+        fs.writeFileSync(dir+"/.electropack.json", JSON.stringify(cfg, null, 4))
+    },
     readDir: (dir) => {
         ipcRenderer.send('readfiles', dir)
         let files = fs.readdirSync(dir)

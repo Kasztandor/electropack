@@ -29,9 +29,52 @@ function codeEditorColors(x){
     setCursorPosition(x, pos);
 }*/
 
-/////////////////////
-// EVENT LISTENERS //
-/////////////////////
+/*=========*/
+/* PRESETS */
+/*=========*/
+
+let dir = "/home/kasztandor/Pulpit/testdir"
+let electropackConfig = window.electropackAPI.loadConfig(dir)
+
+/*===========*/
+/* CONSTANTS */
+/*===========*/
+
+const defaultFileStructure = {
+    "main": {
+        "advancements": {},
+        "dimension": {},
+        "dimension_type": {},
+        "functions": {},
+        "loot_tables": {},
+        "predicates": {},
+        "recipes": {},
+        "structures": {},
+        "tags": {},
+        "chat_type": {},
+        "damage_type": {},
+        "worldgen": {
+            "biome": {},
+            "configured_carver": {},
+            "configured_feature": {},
+            "density_function": {},
+            "flat_level_generator_preset": {},
+            "noise": {},
+            "noise_settings": {},
+            "placed_feature": {},
+            "processor_list": {},
+            "structure": {},
+            "structure_set": {},
+            "template_pool": {},
+            "world_preset": {}
+        }
+    },
+}
+const ignoredFiles = [".electropack.json"]
+
+/*=================*/
+/* EVENT LISTENERS */
+/*=================*/
 
 window.addEventListener('keydown', function(e) {
     if (e.key === 'F12') {
@@ -39,12 +82,24 @@ window.addEventListener('keydown', function(e) {
     }
 })
 
-let dir = "/home/kasztandor/Pulpit/testdir"
-let electropack = window.electropackAPI.loadConfig(dir)
+/*================*/
+/* CORE FUNCTIONS */
+/*================*/
 
-////////////////////////
-// CHANGE EDITOR MODE //
-////////////////////////
+function editConfig(key, value, mode="add"){
+    if (mode == "add" && electropackConfig[key].indexOf(value)==-1){
+        electropackConfig[key].push(value)
+        electropackConfig[key].sort()
+    }
+    else if (mode == "remove" && electropackConfig[key].indexOf(value)!=-1 && electropackConfig[key].length > 1){
+        electropackConfig[key].splice(electropackConfig[key].indexOf(value), 1)
+    }
+    window.electropackAPI.setConfig(dir, electropackConfig)
+}
+
+/*====================*/
+/* CHANGE EDITOR MODE */
+/*====================*/
 
 let editorMode = ""
 function switchEditorMode(x){
@@ -52,6 +107,7 @@ function switchEditorMode(x){
         document.querySelectorAll(".selectedMainTab").forEach(function(element){element.classList.remove("selectedMainTab")})
         document.querySelector("#visualEditorButton").classList.add("selectedMainTab")
         editorMode = "visualEditor"
+        document.querySelector("#leftBar").innerHTML = ''
     }
     else if (x == "filesEditor" && editorMode != "filesEditor"){
         document.querySelectorAll(".selectedMainTab").forEach(function(element){element.classList.remove("selectedMainTab")})
@@ -61,9 +117,9 @@ function switchEditorMode(x){
     }
 }
 
-//////////////////////
-// CENTER FUNCITONS //
-//////////////////////
+/*==================*/
+/* CENTER FUNCITONS */
+/*==================*/
 
 function codeEditorChange(x){
     if (!x.classList.contains("edited")){
@@ -129,13 +185,15 @@ function openTab(x, type){
     switchTab(id)
 }
 
-////////////////////////
-// VISUAL EDITOR MODE //
-////////////////////////
+/*====================*/
+/* VISUAL EDITOR MODE */
+/*====================*/
 
-///////////////////////
-// FILES EDITOR MODE //
-///////////////////////
+
+
+/*===================*/
+/* FILES EDITOR MODE */
+/*===================*/
 
 function fileStructureGenerator(files, depth=1, path="/"){
     let returnString = ""
@@ -162,13 +220,12 @@ function fileStructureGenerator(files, depth=1, path="/"){
     return returnString
 }
 function filesDisplay(){
-    let files = ["dir:Datapack", ["dir:data", ["dir:namespace", ["dir:advancements", "dir:dimension", "dir:dimension_type", "dir:functions", "dir:loot_tables", "dir:predicates", "dir:recipes", "dir:structures", "dir:tags", "dir:chat_type", "dir:damage_type", "dir:worldgen", ["dir:biome", "dir:configured_carver", "dir:configured_feature", "dir:density_function", "dir:flat_level_generator_preset", "dir:noise", "dir:noise_settings", "dir:placed_feature", "dir:processor_list", "dir:structure", "dir:structure_set", "dir:template_pool", "dir:world_preset"]], "dir:minecraft", ["dir:tags", ["dir:functions", ["file:load.json", "file:tick.json"]]]], "file:pack.mcmeta", "file:pack.png"]]
     document.querySelector("#leftBar").innerHTML = '<div id="files"></div>'
     document.querySelector("#files").innerHTML = fileStructureGenerator(files)
 }
 
-//////////
-// INIT //
-//////////
+/*======*/
+/* INIT */
+/*======*/
 
 window.onload = ()=>{switchEditorMode("visualEditor")}
