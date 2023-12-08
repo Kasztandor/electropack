@@ -34,6 +34,7 @@ function codeEditorColors(x){
 /*=========*/
 
 let electropackConfig = window.electropackAPI.loadConfig()
+window.electropackAPI.setConfig(electropackConfig)
 
 /*===========*/
 /* CONSTANTS */
@@ -93,7 +94,17 @@ function editConfig(key, value, mode="add"){
     else if (mode == "remove" && electropackConfig[key].indexOf(value)!=-1 && electropackConfig[key].length > 1){
         electropackConfig[key].splice(electropackConfig[key].indexOf(value), 1)
     }
+    else if (mode == "setValue"){
+        electropackConfig[key] = value
+    }
     window.electropackAPI.setConfig(electropackConfig)
+}
+
+function pathJoiner(...args){
+    let ret = args.join("/").replace(/\/+/g, '/')
+    if (ret.endsWith("/"))
+        ret = ret.substring(0, ret.length-1)
+    return ret
 }
 
 /*====================*/
@@ -102,17 +113,19 @@ function editConfig(key, value, mode="add"){
 
 let editorMode = ""
 function switchEditorMode(x){
-    if (x == "visualEditor" && editorMode != "visualEditor"){
-        document.querySelectorAll(".selectedMainTab").forEach(function(element){element.classList.remove("selectedMainTab")})
-        document.querySelector("#visualEditorButton").classList.add("selectedMainTab")
-        editorMode = "visualEditor"
-        document.querySelector("#leftBar").innerHTML = ''
-    }
-    else if (x == "filesEditor" && editorMode != "filesEditor"){
+    if (x == "filesEditor" && editorMode != "filesEditor"){
+        editConfig("oppenedTab", "filesEditor", "setValue")
         document.querySelectorAll(".selectedMainTab").forEach(function(element){element.classList.remove("selectedMainTab")})
         document.querySelector("#filesEditorButton").classList.add("selectedMainTab")
         editorMode = "filesEditor"
         filesDisplay()
+    }
+    else if (editorMode != "visualEditor"){
+        editConfig("oppenedTab", "visualEditor", "setValue")
+        document.querySelectorAll(".selectedMainTab").forEach(function(element){element.classList.remove("selectedMainTab")})
+        document.querySelector("#visualEditorButton").classList.add("selectedMainTab")
+        editorMode = "visualEditor"
+        document.querySelector("#leftBar").innerHTML = ''
     }
 }
 
@@ -123,17 +136,6 @@ function switchEditorMode(x){
 function codeEditorChange(x){
     if (!x.classList.contains("edited")){
         x.classList.add("edited")
-        console.log(x.parentElement.id.substring(8))
-    }
-}
-function switchOpen(x){
-    if (document.getElementById("dir:"+x) == null){
-        document.getElementById(x).classList.replace("icon-angle-right", "icon-angle-down")
-        document.getElementById("dir:"+x).insertAdjacentHTML("afterbegin", fileStructureGenerator(1, x+"/"))
-    }
-    else{
-        document.getElementById(x).classList.replace("icon-angle-down", "icon-angle-right")
-        document.getElementById("dir:"+x).remove()
     }
 }
 function switchTab(id){
@@ -190,23 +192,35 @@ function openTab(x, type){
 /* FILES EDITOR MODE */
 /*===================*/
 
-function fileStructureGenerator(depth=1, path="/"){
-    let returnString = ""
+function switchOpen(x){
+    if (document.getElementById("dir:"+x) == null){
+        document.getElementById(x).childNodes.forEach(e => e.classList.replace("icon-angle-right", "icon-angle-down"))
+        document.getElementById(x).insertAdjacentHTML("afterend", fileStructureGenerator(document.getElementById(x).parentElement.style.getPropertyValue('--depth')*1+1, x))
+        editConfig("oppenedDirs", x, "add")
+    }
+    else{
+        document.getElementById(x).childNodes.forEach(e => e.classList.replace("icon-angle-down", "icon-angle-right"))
+        document.getElementById("dir:"+x).remove()
+        editConfig("oppenedDirs", x, "remove")
+    }
+}
+
+function fileStructureGenerator(depth=0, path="/"){
+    let returnString = '<div id="'+"dir:"+path+'" class="directoryStorage" style="--depth: '+depth+';">'
     let scannedFiles = window.electropackAPI.readDir(path)
-    console.log(scannedFiles)
     scannedFiles["dirs"].forEach(function(element){
         let subdir = ""
         let icon = "icon-angle-right"
-        if (electropackConfig.oppenedDirs.includes(path+element)){
-            subdir = '<div id="'+"dir:"+path+element+'" class="directoryStorage" style="--depth: '+depth+'px;">'+fileStructureGenerator(depth+1, path+element+"/")+'</div>'
+        if (electropackConfig.oppenedDirs.includes(pathJoiner(path, element))){
+            subdir = fileStructureGenerator(depth+1, pathJoiner(path, element))
             icon = "icon-angle-down"
         }
-        let dir = '<div class="directory"><i id="'+path+element+'" class="'+icon+' clickableI" onclick="switchOpen("'+path+element+'")"></i><span>'+element+'</span></div>'
+        let dir = '<div id="'+pathJoiner(path, element)+'" class="directory" onclick=\'switchOpen("'+pathJoiner(path, element)+'")\'><i class="'+icon+'"></i><span>'+element+'</span></div>'
         returnString += dir+subdir
     })
     scannedFiles["files"].forEach(function(element){
         if (!ignoredFiles.includes(element)){
-            returnString += '<div class="file" onclick=\'openTab("'+path+element+'", "file")\'><i class="icon-doc"></i><span>'+element+'</span></div>'
+            returnString += '<div class="file" onclick=\'openTab("'+pathJoiner(path, element)+'", "file")\'><i class="icon-doc"></i><span>'+element+'</span></div>'
         }
     })
     /*files.forEach(function(element, index, array){
@@ -229,7 +243,7 @@ function fileStructureGenerator(depth=1, path="/"){
             returnString += '<div class="directoryStorage" style="--depth: '+depth+'px;">'+fileStructureGenerator(element, depth+1, path+array[index-1].substring(4)+"/")+'</div>'
         }
     })*/
-    return returnString
+    return returnString+"</div>"
 }
 function filesDisplay(){
     document.querySelector("#leftBar").innerHTML = '<div id="files"></div>'
@@ -240,4 +254,4 @@ function filesDisplay(){
 /* INIT */
 /*======*/
 
-window.onload = ()=>{switchEditorMode("visualEditor")}
+window.onload = ()=>{switchEditorMode(electropackConfig.oppenedTab)}
