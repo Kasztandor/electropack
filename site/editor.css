@@ -101,6 +101,8 @@ main{
                     transform: scale(0.7);}
                 .tab .icon-cancel:hover{
                     color: red;}
+            .tab.edited{
+                background-color: #777;}
         #openedTab{
             height: calc(100% - 35px);
             overflow: auto;}

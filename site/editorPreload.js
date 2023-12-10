@@ -41,5 +41,12 @@ contextBridge.exposeInMainWorld('electropackAPI', {
                 files.files.push(file)
         })
         return files
+    },
+    readFile: (file) => {
+        let content = fs.readFileSync(path.join(dir,file), "utf-8")
+        return content
+    },
+    writeFile: (file, content) => {
+        fs.writeFileSync(path.join(dir,file), content)
     }
 })

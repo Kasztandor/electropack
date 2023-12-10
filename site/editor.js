@@ -134,6 +134,9 @@ function switchEditorMode(x){
 /*==================*/
 
 function codeEditorChange(x){
+    let id = x.id.substring(11)
+    console.log(x.id)
+    let element = document.getElementById("tab:"+id)
     if (!x.classList.contains("edited")){
         x.classList.add("edited")
     }
@@ -150,9 +153,12 @@ function switchTab(id){
 }
 function closeTab(id, approved="prompt"){
     if (approved == "prompt"){
-        document.querySelector("#promptDiv").style.display = "block"
-        document.querySelector("#prompt").innerHTML = '<div>Do you really want to close unsaved file?</div><div><button onclick=\'closeTab("'+id+'", true)\'>Yes</button><button  onclick=\'closeTab("'+id+'", false)\'>No</button></div>'
-        return
+        //if (document.getElementById("content:"+id).classList.contains("edited")){
+            document.querySelector("#promptDiv").style.display = "block"
+            document.querySelector("#prompt").innerHTML = '<div>Do you really want to close unsaved file?</div><div><button onclick=\'closeTab("'+id+'", true)\'>Yes</button><button  onclick=\'closeTab("'+id+'", false)\'>No</button></div>'
+            return
+        //}
+        //closeTab(id, true)
     }
     document.querySelector("#promptDiv").style.display = "none"
     if (approved == true){
@@ -174,10 +180,10 @@ function openTab(x, type){
     if (document.getElementById("tab:"+id) == null){
         if (type == "file"){
             var tabContent = '<i class="icon-doc"></i> '+x.split("/")[x.split("/").length-1]
-            var contentContent = '<div id="codeEditor" contenteditable="true" oninput="codeEditorChange(this)"></div>'
+            var contentContent = '<div id="codeEditor" contenteditable="true" oninput="codeEditorChange(this)">'+window.electropackAPI.readFile(x)+'</div>'
         }
         document.querySelector("#tabs").innerHTML += '<div id="tab:'+id+'" class="tab" onclick="switchTab(\''+id+'\')">'+tabContent+' <i class="icon-cancel" onclick=\'closeTab("'+id+'")\'></i></div>'
-        document.querySelector("#openedTab").innerHTML += '<div display="none" class="openedTabContent" id="content:'+id+'">'+contentContent+'</div>'
+        document.querySelector("#openedTab").innerHTML += '<div class="openedTabContent" id="content:'+id+'">'+contentContent+'</div>'
     }
     switchTab(id)
 }
@@ -223,26 +229,6 @@ function fileStructureGenerator(depth=0, path="/"){
             returnString += '<div class="file" onclick=\'openTab("'+pathJoiner(path, element)+'", "file")\'><i class="icon-doc"></i><span>'+element+'</span></div>'
         }
     })
-    /*files.forEach(function(element, index, array){
-        if (typeof(element) == "string"){
-            if (element.startsWith("dir:")){
-                let temp = ""
-                if ((index === array.length - 1) || (typeof(array[index+1]) == "string")){
-                    temp = '<i class="icon-angle-down"></i>'
-                }
-                else{
-                    temp = '<i class="icon-angle-down clickableI" onclick="switchOpen(this)"></i>'
-                }
-                returnString += '<div class="directory">'+temp+'<span>'+element.substring(4)+'</span></div>'
-            }
-            else{
-                returnString += '<div class="file" onclick=\'openTab("'+path+element.substring(5)+'", "file")\'><i class="icon-doc"></i><span>'+element.substring(5)+'</span></div>'
-            }
-        }
-        else{
-            returnString += '<div class="directoryStorage" style="--depth: '+depth+'px;">'+fileStructureGenerator(element, depth+1, path+array[index-1].substring(4)+"/")+'</div>'
-        }
-    })*/
     return returnString+"</div>"
 }
 function filesDisplay(){
