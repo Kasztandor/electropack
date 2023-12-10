@@ -76,9 +76,20 @@ const ignoredFiles = [".electropack.json"]
 /* EVENT LISTENERS */
 /*=================*/
 
+let pressedKeys = []
 window.addEventListener('keydown', function(e) {
-    if (e.key === 'F12') {
+    pressedKeys.push(e.key)
+    if (pressedKeys.indexOf("F12")!=-1){
         window.electropackAPI.devtools()
+    }
+    if (pressedKeys.indexOf("Control")!=-1 && pressedKeys.indexOf("s")!=-1){
+        saveFile()
+    }
+    console.log(pressedKeys)
+})
+window.addEventListener('keyup', function(e) {
+    while (pressedKeys.indexOf(e.key)!=-1){
+        pressedKeys.splice(pressedKeys.indexOf(e.key), 1)
     }
 })
 
@@ -134,11 +145,9 @@ function switchEditorMode(x){
 /*==================*/
 
 function codeEditorChange(x){
-    let id = x.id.substring(11)
-    console.log(x.id)
-    let element = document.getElementById("tab:"+id)
-    if (!x.classList.contains("edited")){
-        x.classList.add("edited")
+    console.log(x)
+    if (!document.getElementById("tab:"+x).classList.contains("edited")){
+        document.getElementById("tab:"+x).classList.add("edited")
     }
 }
 function switchTab(id){
@@ -153,12 +162,12 @@ function switchTab(id){
 }
 function closeTab(id, approved="prompt"){
     if (approved == "prompt"){
-        //if (document.getElementById("content:"+id).classList.contains("edited")){
+        if (document.getElementById("tab:"+id).classList.contains("edited")){
             document.querySelector("#promptDiv").style.display = "block"
             document.querySelector("#prompt").innerHTML = '<div>Do you really want to close unsaved file?</div><div><button onclick=\'closeTab("'+id+'", true)\'>Yes</button><button  onclick=\'closeTab("'+id+'", false)\'>No</button></div>'
             return
-        //}
-        //closeTab(id, true)
+        }
+        closeTab(id, true)
     }
     document.querySelector("#promptDiv").style.display = "none"
     if (approved == true){
@@ -179,13 +188,20 @@ function openTab(x, type){
     }
     if (document.getElementById("tab:"+id) == null){
         if (type == "file"){
-            var tabContent = '<i class="icon-doc"></i> '+x.split("/")[x.split("/").length-1]
-            var contentContent = '<div id="codeEditor" contenteditable="true" oninput="codeEditorChange(this)">'+window.electropackAPI.readFile(x)+'</div>'
+            var tab = '<i class="icon-doc"></i> '+x.split("/")[x.split("/").length-1]
+            var content = '<div class="codeEditor" contenteditable="true" oninput=\'codeEditorChange("'+id+'")\'>'+window.electropackAPI.readFile(x)+'</div>'
         }
-        document.querySelector("#tabs").innerHTML += '<div id="tab:'+id+'" class="tab" onclick="switchTab(\''+id+'\')">'+tabContent+' <i class="icon-cancel" onclick=\'closeTab("'+id+'")\'></i></div>'
-        document.querySelector("#openedTab").innerHTML += '<div class="openedTabContent" id="content:'+id+'">'+contentContent+'</div>'
+        document.querySelector("#tabs").innerHTML += '<div id="tab:'+id+'" class="tab" onclick="switchTab(\''+id+'\')">'+tab+' <i class="icon-cancel" onclick=\'closeTab("'+id+'")\'></i></div>'
+        document.querySelector("#openedTab").innerHTML += '<div class="openedTabContent" id="content:'+id+'">'+content+'</div>'
     }
     switchTab(id)
+}
+
+function saveFile(){
+    let id = document.querySelector(".selectedTab").id.substring(4)
+    let content = document.getElementById("content:"+id).childNodes[0].innerHTML
+    window.electropackAPI.writeFile(id.substring(5), content)
+    document.getElementById("tab:"+id).classList.remove("edited")
 }
 
 /*====================*/
