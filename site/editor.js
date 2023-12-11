@@ -78,14 +78,14 @@ const ignoredFiles = [".electropack.json"]
 
 let pressedKeys = []
 window.addEventListener('keydown', function(e) {
-    pressedKeys.push(e.key)
+    if (pressedKeys.indexOf(e.key)==-1)
+        pressedKeys.push(e.key)
     if (pressedKeys.indexOf("F12")!=-1){
         window.electropackAPI.devtools()
     }
     if (pressedKeys.indexOf("Control")!=-1 && pressedKeys.indexOf("s")!=-1){
         saveFile()
     }
-    console.log(pressedKeys)
 })
 window.addEventListener('keyup', function(e) {
     while (pressedKeys.indexOf(e.key)!=-1){
@@ -189,7 +189,7 @@ function openTab(x, type){
     if (document.getElementById("tab:"+id) == null){
         if (type == "file"){
             var tab = '<i class="icon-doc"></i> '+x.split("/")[x.split("/").length-1]
-            var content = '<div class="codeEditor" contenteditable="true" oninput=\'codeEditorChange("'+id+'")\'>'+window.electropackAPI.readFile(x)+'</div>'
+            var content = '<div class="codeEditor" contenteditable="true" oninput=\'codeEditorChange("'+id+'")\'><div>'+window.electropackAPI.readFile(x).replace("\n", "</div><div>")+'</div></div>'
         }
         document.querySelector("#tabs").innerHTML += '<div id="tab:'+id+'" class="tab" onclick="switchTab(\''+id+'\')">'+tab+' <i class="icon-cancel" onclick=\'closeTab("'+id+'")\'></i></div>'
         document.querySelector("#openedTab").innerHTML += '<div class="openedTabContent" id="content:'+id+'">'+content+'</div>'
@@ -197,9 +197,12 @@ function openTab(x, type){
     switchTab(id)
 }
 
-function saveFile(){
-    let id = document.querySelector(".selectedTab").id.substring(4)
-    let content = document.getElementById("content:"+id).childNodes[0].innerHTML
+function saveFile(id = null){
+    if (document.getElementsByClassName("tab").length == 0)
+        return
+    if (id == null)
+        id = document.querySelector(".selectedTab").id.substring(4)
+    let content = document.getElementById("content:"+id).childNodes[0].innerText
     window.electropackAPI.writeFile(id.substring(5), content)
     document.getElementById("tab:"+id).classList.remove("edited")
 }
