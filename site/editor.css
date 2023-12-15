@@ -118,14 +118,14 @@ main{
                             outline: 0px solid transparent;}
                         .kw1{
                             color: blue;}
-#promptDiv{
+#closePromptDiv, #createSubPromptDiv{
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     background-color: rgba(0,0,0,.5);}
-    #prompt{
+    #closePrompt{
         position: absolute;
         text-align: center;
         border: 1px solid #555;
@@ -135,18 +135,18 @@ main{
         background-color: #222;
         width: 375px;
         height: 100px;}
-        #prompt > div:nth-child(1){
+        #closePrompt > div:nth-child(1){
             background-color: #555;
             height: 19px;
             padding: 5px;
             line-height: 19px;
             font-size: 18px;}
-        #prompt > div:nth-child(2){
+        #closePrompt > div:nth-child(2){
             height: 70px;
             line-height: 70px;
             font-size: 15px;
             text-align: center;}
-        #prompt button{
+        #closePrompt button{
             display: inline-block;
             margin: 5px;
             padding: 5px 10px;
@@ -155,6 +155,35 @@ main{
             background-color: #333;
             color: white;
             margin-bottom: 10px;}
-            #prompt button:hover{
+            #closePrompt button:hover{
                 cursor: pointer;
                 background-color: #444;}
+    #createSubPrompt{
+        position: absolute;
+        left: var(--cursorX);
+        top: var(--cursorY);
+        width: 200px;
+        background-color: #222;
+        border: 1px solid #555;}
+        #createSubPrompt > div:nth-child(1){
+            background-color: #555;
+            height: 19px;
+            padding: 5px;
+            line-height: 19px;
+            font-size: 18px;}
+        #createSubPrompt > div{
+            padding: 5px;}
+            #createSubPrompt input{
+                width: calc(100% - 4px);
+                height: 30px;
+                padding: 2px;
+                border: none;
+                border-top: 1px solid #555;
+                border-bottom: 1px solid #555;
+                background-color: #333;
+                color: white;}
+        #createSubPrompt > .clickable:hover{
+            cursor: pointer;
+            background-color: #444;}
+        #createSubPrompt > .nopadding{
+            padding: 0;}

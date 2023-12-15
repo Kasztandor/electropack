@@ -35,6 +35,7 @@ function codeEditorColors(x){
 
 let electropackConfig = window.electropackAPI.loadConfig()
 window.electropackAPI.setConfig(electropackConfig)
+let cursor = {x: 0, y: 0}
 
 /*===========*/
 /* CONSTANTS */
@@ -92,6 +93,10 @@ window.addEventListener('keyup', function(e) {
         pressedKeys.splice(pressedKeys.indexOf(e.key), 1)
     }
 })
+document.onmousemove = function(e){
+    cursor.x = e.pageX
+    cursor.y = e.pageY
+}
 
 /*================*/
 /* CORE FUNCTIONS */
@@ -163,13 +168,13 @@ function switchTab(id){
 function closeTab(id, approved="prompt"){
     if (approved == "prompt"){
         if (document.getElementById("tab:"+id).classList.contains("edited")){
-            document.querySelector("#promptDiv").style.display = "block"
-            document.querySelector("#prompt").innerHTML = '<div>Do you really want to close unsaved file?</div><div><button onclick=\'closeTab("'+id+'", true)\'>Yes</button><button  onclick=\'closeTab("'+id+'", false)\'>No</button></div>'
+            document.querySelector("#closePromptDiv").style.display = "block"
+            document.querySelector("#closePrompt").innerHTML = '<div>Do you really want to close unsaved file?</div><div><button onclick=\'closeTab("'+id+'", true)\'>Yes</button><button  onclick=\'closeTab("'+id+'", false)\'>No</button></div>'
             return
         }
         closeTab(id, true)
     }
-    document.querySelector("#promptDiv").style.display = "none"
+    document.querySelector("#closePromptDiv").style.display = "none"
     if (approved == true){
         document.getElementById("tab:"+id).remove()
         document.getElementById("content:"+id).remove()
@@ -230,6 +235,47 @@ function switchOpen(x){
     }
 }
 
+function createSub(x, type, requestType="prompt", thisElement=null){
+    if (requestType == "close"){
+        document.getElementById("createSubPromptDiv").style.display = "none"
+    }
+    else if (requestType == "prompt"){
+        document.getElementById("createSubPromptDiv").style.display = "block"
+        document.getElementById("createSubPrompt").style.setProperty("--cursorX", cursor.x+"px")
+        document.getElementById("createSubPrompt").style.setProperty("--cursorY", cursor.y+"px")
+        if (type == "file"){
+            document.getElementById("createSubPrompt").innerHTML = `
+            <div>`+x+`</div>
+            <div>Rename:</div>
+            <div class="nopadding"><input type="text" placeholder="Rename" value=`+x.split("/")[x.split("/").length-1]+` onkeydown='if (event.key === "Enter") createSub("`+x+`", "file", "rename", this);'></div>
+            <div class="clickable">Remove</div>
+        `
+        }
+        else if (type == "dir"){
+            document.getElementById("createSubPrompt").innerHTML = `
+                <div>`+x+`</div>
+            `
+        }
+    }
+    else if (requestType == "rename"){
+        document.getElementById("createSubPromptDiv").style.display = "none"
+        if (thisElement.value != ""){
+            let newPath = x.split("/")
+            let name = newPath[newPath.length-1]
+            newPath[newPath.length-1] = thisElement.value
+            newPath = newPath.join("/")
+            //window.electropackAPI.rename(x, newPath)
+            document.getElementById("dir:"+x).id = "dir:"+newPath
+            document.getElementById(x).id = newPath
+            document.getElementById("tab:file:"+x).id = "tab:file:"+newPath
+            document.getElementById("content:file:"+x).id = "content:file:"+newPath
+            document.getElementById("tab:file:"+newPath).innerHTML = '<i class="icon-doc"></i> '+newPath.split("/")[newPath.split("/").length-1]
+            document.getElementById("content:file:"+newPath).childNodes[0].innerText = window.electropackAPI.readFile(newPath)
+            document.getElementById("createSubPromptDiv").style.display = "none"
+        }
+    }
+}
+
 function fileStructureGenerator(depth=0, path="/"){
     let returnString = '<div id="'+"dir:"+path+'" class="directoryStorage" style="--depth: '+depth+';">'
     let scannedFiles = window.electropackAPI.readDir(path)
@@ -240,12 +286,12 @@ function fileStructureGenerator(depth=0, path="/"){
             subdir = fileStructureGenerator(depth+1, pathJoiner(path, element))
             icon = "icon-angle-down"
         }
-        let dir = '<div id="'+pathJoiner(path, element)+'" class="directory" onclick=\'switchOpen("'+pathJoiner(path, element)+'")\'><i class="'+icon+'"></i><span>'+element+'</span></div>'
+        let dir = '<div id="'+pathJoiner(path, element)+'" class="directory" onclick=\'switchOpen("'+pathJoiner(path, element)+'")\' oncontextmenu=\'createSub("'+pathJoiner(path, element)+'", "dir")\'><i class="'+icon+'"></i><span>'+element+'</span></div>'
         returnString += dir+subdir
     })
     scannedFiles["files"].forEach(function(element){
         if (!ignoredFiles.includes(element)){
-            returnString += '<div class="file" onclick=\'openTab("'+pathJoiner(path, element)+'", "file")\'><i class="icon-doc"></i><span>'+element+'</span></div>'
+            returnString += '<div class="file" onclick=\'openTab("'+pathJoiner(path, element)+'", "file")\' oncontextmenu=\'createSub("'+pathJoiner(path, element)+'", "file")\'><i class="icon-doc"></i><span>'+element+'</span></div>'
         }
     })
     return returnString+"</div>"
